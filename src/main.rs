@@ -4,14 +4,14 @@ use std::ops::{BitXor, BitOr};
 use itertools::Itertools;
 
 fn main() {
-    let size = 5;
-    let test_data: Vec<usize> = (1..10+1).collect();
+    // let size = 5;
+    let test_data: Vec<i32> = (1..13+1).collect();
 
-    let results = test_all(size, test_data, &xor);
-    //let results = find_minimal_for_size(test_data, &xor);
+    // let results = test_all(size, test_data, &xor);
+    let results = find_minimal_for_size(test_data, &abs_diff);
     // let result = find_minimal_for_top_val_xor(size);
 
-    // println!("Needs 1..{} to solve for {}", size, result);
+    // println!("Needs 1..{} to solve for {}", result, size);
 
     for res in &results {
         println!("Found!");
@@ -30,6 +30,14 @@ fn xor<T>(a: T, b: T) -> T where T: BitXor<T, Output = T> {
 
 fn or<T>(a: T, b: T) -> T where T: BitOr<T, Output = T> {
     a | b
+}
+
+fn abs_diff<T>(a: T, b: T) -> T where T: PartialOrd + std::ops::Sub<Output = T> + std::ops::Neg<Output = T> {
+    if a > b {
+        a - b
+    } else {
+        b - a
+    }
 }
 
 // generate subsets of "size"
@@ -62,7 +70,7 @@ fn test_all<T>(size: usize, test_data: Vec<T>, f: &dyn Fn(T, T) -> T) -> Vec<Vec
 }
 
 // finds sets of a minimal size needed for a specific input set
-fn find_minimal_for_size<T>(test_data: Vec<T>, f: &dyn Fn(T, T) ->T) -> Vec<Vec<T>> where T: Clone + PartialEq + std::fmt::Debug {
+fn find_minimal_for_size<T>(test_data: Vec<T>, f: &dyn Fn(T, T) -> T) -> Vec<Vec<T>> where T: Clone + PartialEq + std::fmt::Debug {
     let mut counter = 1;
     while let result = test_all(counter, test_data.clone(), f) {
         if result.len() != 0 {
@@ -74,15 +82,34 @@ fn find_minimal_for_size<T>(test_data: Vec<T>, f: &dyn Fn(T, T) ->T) -> Vec<Vec<
 }
 
 // finds sets of a minimal size needed for a specific input set
-// #[warn(while_true)]
-// fn find_minimal_for_top_val_xor(size: usize) -> usize {
-//     let mut counter = 1;
-//     loop {
-//         let test_data: Vec<usize> = (1..size+1).collect();
-//         let result = test_all(counter, test_data, &xor);
-//         if result.len() != 0 {
-//             return counter;
-//         }
-//         counter += 1;
-//     }
-// }
+#[warn(while_true)]
+fn find_minimal_for_top_val_xor(size: usize) -> usize {
+    let mut counter = 1;
+    loop {
+        let test_data: Vec<usize> = (1..counter+1).collect();
+        let result = test_all(size, test_data, &xor);
+        if result.len() != 0 {
+            return counter;
+        }
+        counter += 1;
+    }
+}
+
+// finds sets of a minimal size needed for a specific input set
+#[warn(while_true)]
+fn find_max_top_val_xor(size: usize) -> usize {
+    let mut counter = 1;
+    loop {
+        let test_data: Vec<usize> = (1..counter+1).collect();
+        let result = test_all(size, test_data, &xor);
+        if result.len() != 0 {
+            return counter;
+        }
+        counter += 1;
+    }
+}
+
+// follows enbyd's basic algorithm for creating a *somewhat* minimal solution
+fn quick_solution_finder<T>(test_data: Vec<T>, f: &dyn Fn(T, T) -> T) {
+    unimplemented!();
+}
